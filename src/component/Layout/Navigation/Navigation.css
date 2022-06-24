@@ -1,0 +1,9 @@
+.nav__link{
+	margin-right: 1rem;
+	text-transform: uppercase;
+	font-size: 14px;
+	text-decoration: none;
+	color: rgb(2, 33, 205);
+	font-weight: 500;
+}
+

@@ -1,23 +1,39 @@
-import logo from './logo.svg';
 import './App.css';
+import { Routes, Route } from 'react-router-dom';
+import Currency from './component/Currency/Currency';
+import Converter from './component/Converter/Converter';
+import Layout from './component/Layout/Layout'
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCurrencies } from './store/reducers/currency.reducer';
 
 function App() {
+  const dispatch = useDispatch();
+  const currencies =  useSelector(store => store.currency.currencies)
+  const [loading, setLoading ] =  useState(false)
+  const [rates, setRates] = useState([]);
+
+
+  useEffect(() => {
+    dispatch(getCurrencies()).then(() => setLoading(true))
+  }, [dispatch])
+
+  useEffect(() => {
+		fetch("https://www.cbr-xml-daily.ru/latest.js")
+		  .then((res) => res.json())
+		  .then((data) => {
+			setRates(data.rates);
+		  });
+	  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {loading && <Layout>
+        <Routes>
+          <Route path='/' element={<Currency currency={currencies} rates={rates}/>}/>
+          <Route path='/converter' element={<Converter rates={rates}/>}/>
+        </Routes>
+      </Layout>}
     </div>
   );
 }
